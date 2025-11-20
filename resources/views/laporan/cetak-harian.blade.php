@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Laporan Harian Pelanggaran</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h2, h3 { text-align: center; margin: 5px 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #000; padding: 8px; text-align: left; font-size: 12px; }
+        th { background: #f0f0f0; }
+        .text-center { text-align: center; }
+        @media print {
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <h2>SMK Bakti Nusantara 666</h2>
+    <h3>Laporan Harian Pelanggaran Siswa</h3>
+    <p class="text-center">Tanggal: {{ \Carbon\Carbon::parse($tanggal)->format('d F Y') }}</p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th width="5%">No</th>
+                <th width="15%">NIS</th>
+                <th width="20%">Nama Siswa</th>
+                <th width="10%">Kelas</th>
+                <th width="25%">Jenis Pelanggaran</th>
+                <th width="10%">Poin</th>
+                <th width="15%">Guru Pencatat</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($pelanggaran as $index => $p)
+            <tr>
+                <td class="text-center">{{ $index + 1 }}</td>
+                <td>{{ $p->siswa->nis }}</td>
+                <td>{{ $p->siswa->nama }}</td>
+                <td>{{ $p->siswa->kelas->nama_kelas ?? '-' }}</td>
+                <td>{{ $p->jenisPelanggaran->nama_pelanggaran }}</td>
+                <td class="text-center">{{ $p->point }}</td>
+                <td>{{ $p->guruPencatat->nama_lengkap ?? '-' }}</td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="7" class="text-center">Tidak ada data pelanggaran</td>
+            </tr>
+            @endforelse
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="5" class="text-center">Total</th>
+                <th class="text-center">{{ $pelanggaran->sum('point') }}</th>
+                <th></th>
+            </tr>
+        </tfoot>
+    </table>
+    
+    <div style="margin-top: 50px; text-align: right;">
+        <p>Dicetak pada: {{ date('d F Y H:i') }}</p>
+    </div>
+    
+    <script>
+        window.onload = function() {
+            window.print();
+        }
+    </script>
+</body>
+</html>
